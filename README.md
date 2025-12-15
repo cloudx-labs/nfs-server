@@ -1,4 +1,4 @@
-# gcp-nfs-server
+# nfs-server
 
 Maintained rebuild of the old GoogleCloudPlatform `nfs-server-docker` image for running an NFSv3-compatible server inside a container. The image is based on Debian 11 and packages the upstream `nfs-kernel-server` along with the original entrypoint script that manages exports.
 
@@ -15,13 +15,13 @@ Maintained rebuild of the old GoogleCloudPlatform `nfs-server-docker` image for 
 GitHub Actions builds and pushes the image to GitHub Container Registry on every push to `main` or when manually triggered via the **Build and Push NFS Server Image** workflow.
 
 -   Registry: `ghcr.io`
--   Image: `ghcr.io/cloudx-labs/gcp-nfs-server`
+-   Image: `ghcr.io/cloudx-labs/nfs-server`
 -   Tags: `latest`, branch names, semantic versions (when applicable), and commit SHAs generated via `docker/metadata-action`
 
 To pull the latest build:
 
 ```
-docker pull ghcr.io/cloudx-labs/gcp-nfs-server:latest
+docker pull ghcr.io/cloudx-labs/nfs-server:latest
 ```
 
 ## Running the NFS server container
@@ -34,7 +34,7 @@ docker run -d \
   --privileged \
   --network host \
   -v /srv/nfs/data:/exports \
-  ghcr.io/cloudx-labs/gcp-nfs-server:latest
+  ghcr.io/cloudx-labs/nfs-server:latest
 ```
 
 -   `--privileged` (or equivalent capabilities) is required so the kernel NFS daemons can start.
@@ -49,7 +49,7 @@ Pass each export path to the container. The entrypoint writes them to `/etc/expo
 docker run -d --privileged --network host \
   -v /srv/nfs/data:/exports/data \
   -v /srv/nfs/backups:/exports/backups \
-  ghcr.io/cloudx-labs/gcp-nfs-server:latest \
+  ghcr.io/cloudx-labs/nfs-server:latest \
   /exports/data /exports/backups
 ```
 
@@ -60,7 +60,7 @@ Use `-G <gid>` to reassign group ownership of the exported directories inside th
 ```
 docker run -d --privileged --network host \
   -v /srv/nfs/data:/exports \
-  ghcr.io/cloudx-labs/gcp-nfs-server:latest \
+  ghcr.io/cloudx-labs/nfs-server:latest \
   -G 2000 /exports
 ```
 
@@ -77,9 +77,9 @@ sudo mount -t nfs -o vers=3 <server>:/exports /mnt/nfs
 ## Building locally
 
 ```
-git clone https://github.com/cloudx-labs/gcp-nfs-server.git
-cd gcp-nfs-server
-docker build -t gcp-nfs-server:local .
+git clone https://github.com/cloudx-labs/nfs-server.git
+cd nfs-server
+docker build -t nfs-server:local .
 ```
 
 Publish your local build to a registry of choice or run it directly with the commands above.
