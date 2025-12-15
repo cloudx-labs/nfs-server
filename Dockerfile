@@ -17,8 +17,6 @@ FROM debian:11-slim
 
 ENV NFS_VERSION 1:1.3.4-6
 
-ENV C2D_RELEASE 1.3.4
-
 RUN set -x && \
     apt-get update && apt-get install -qq -y openssl nfs-kernel-server=${NFS_VERSION}* && \
     rm -rf /var/lib/apt/lists/* && \
