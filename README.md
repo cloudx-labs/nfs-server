@@ -84,6 +84,31 @@ docker build -t gcp-nfs-server:local .
 
 Publish your local build to a registry of choice or run it directly with the commands above.
 
+## Smoke test with Docker Compose
+
+Use the bundled `docker-compose.nfs-test.yml` file to start the published image alongside a disposable Debian client that mounts the export, writes a probe file, and unmounts cleanly.
+
+```
+docker compose -f docker-compose.nfs-test.yml up --abort-on-container-exit
+```
+
+-   The `nfs_server` service runs `ghcr.io/cloudx-labs/nfs-server:latest` in privileged mode and publishes the standard NFS ports on the host for debugging.
+-   The `nfs_client` service waits for the server health check (`rpcinfo -u localhost nfs 3`) to succeed, mounts `nfs_server:/exports` with NFSv3, writes `test-client.txt`, prints its contents, lists the directory, and exits.
+
+> **Note:** The client container needs NFS kernel support on the host (the `nfs` module). If the mount step fails with `Protocol not supported`, load the module on the host or run the test on a machine where NFS client modules are available.
+
+After the run completes, inspect the server export to confirm the file was created:
+
+```
+docker compose -f docker-compose.nfs-test.yml exec nfs_server ls -al /exports
+```
+
+When you are done, tear everything down (removing the named volume that holds the exported data):
+
+```
+docker compose -f docker-compose.nfs-test.yml down -v
+```
+
 ## Contributing
 
 Issues and pull requests are welcome. When contributing changes that affect the image contents, update this README and verify the container starts successfully by running it locally.
